@@ -1,0 +1,156 @@
+<html>
+<!-- 
+Author: Praveen T N 
+Twitter: @iVanPeer 
+Created On: 5/15/2018
+
+
+-->
+<head>
+    <link rel="stylesheet" type="text/css" src="css/gitgraph.css" />
+	<title>Git Branching & Actions </title>
+</head>
+
+<body>
+    <canvas id="gitGraph">
+</canvas>
+</body>
+
+<head>
+    <script src="src/gitgraph.js"></script>
+    <script type="text/javascript">
+        var myTemplateConfig = {
+            colors: ["#F00", "#0F0", "#AAF", "#DAF", "#AF0", "#CCC", "#1AA", "#2DD"], // branches colors, 1 per column
+            branch: {
+                lineWidth: 8,
+                spacingX: 50,
+                showLabel: true, // display branch names on graph
+            },
+            commit: {
+                spacingY: -80,
+                dot: {
+                    size: 12
+                },
+                message: {
+                    displayAuthor: true,
+                    displayBranch: false,
+                    displayHash: false,
+                    font: "normal 12pt Arial"
+                },
+                shouldDisplayTooltipsInCompactMode: false, // default = true
+                tooltipHTMLFormatter: function(commit) {
+                    return "" + commit.sha1 + "" + ": " + commit.message;
+                }
+            }
+        };
+        var myTemplate = new GitGraph.Template(myTemplateConfig);
+        var gitgraph = new GitGraph({
+            template: myTemplate
+        });
+
+        var master = gitgraph.branch("[Protected] Master");
+        gitgraph.commit().commit(); // 3 commits upon HEAD
+
+        var hotfix = gitgraph.branch("Hot fixes");
+        hotfix.commit();
+
+        hotfix.commit();
+
+        hotfix.merge(master, {
+            message: "hot fix",
+            tag: "min_1"
+        });
+
+        gitgraph.commit();
+        master.commit();
+
+        var develop = gitgraph.branch("[Protected] Developer"); // New branch from HEAD
+        develop.commit();
+
+        var sprint1 = gitgraph.branch("Sprint [1]"); // New branch from HEAD
+        sprint1.commit();
+
+        var bugfix1 = sprint1.branch("Issue fixes"); // New branch from develop
+        bugfix1.commit();
+
+        bugfix1.merge(sprint1, {
+            message: "New release",
+            tag: "Sprint [1] fixes"
+        })
+
+        sprint1.merge(develop, {
+            message: "New release",
+            tag: "Sprint [1]"
+        });
+
+        develop.commit();
+        var sprint2 = gitgraph.branch("Sprint [2]"); // New branch from HEAD
+        sprint2.commit();
+
+        var bugfix2 = sprint2.branch("Issue fixes"); // New branch from develop
+        bugfix2.commit();
+
+        bugfix2.merge(sprint2, {
+            message: "New release",
+            tag: "Sprint [1] fixes"
+        })
+        sprint2.merge(develop, {
+            message: "New release",
+            tag: "Sprint [1]"
+        });
+
+        develop.merge(master, {
+            message: "New release",
+            tag: "Sprint [1]"
+        });
+        develop.commit().commit();
+
+        gitgraph.commit();
+
+        master.commit({
+            // dotColor attribute - white
+            dotSize: 10,
+            dotStrokeWidth: 10,
+            sha1: "666",
+            message: "",
+            author: "master review",
+            tag: "live",
+            onClick: function(commit) {
+                console.log("Commits", commit);
+            }
+        });
+
+
+        gitgraph.commit();
+
+        var conline = gitgraph.branch("Sprint");
+        conline.commit();
+
+        conline.commit();
+
+        conline.merge(master, {
+            message: "New release",
+            tag: "min_1"
+        });
+
+        gitgraph.commit();
+
+        master.commit({
+            dotColor: "",
+            dotSize: 10,
+            dotStrokeWidth: 10,
+            sha1: "666",
+            message: "",
+            author: "Batman",
+            tag: "live",
+            onClick: function(commit) {
+                console.log("Commits", commit);
+            }
+        });
+
+        gitgraph.commit();
+    </script>
+
+</head>
+
+</html>

@@ -1,0 +1,79 @@
+<html>
+<!-- 
+Author: Praveen T N 
+Twitter: @iVanPeer 
+Created On: 5/15/2018
+-->
+
+<head>
+    <link rel="stylesheet" type="text/css" src="css/gitgraph.css" />
+</head>
+
+<body>
+    <canvas id="gitGraph">
+</canvas>
+</body>
+
+<head>
+    <title>Git Branching & Actions </title>
+    <script src="src/gitgraph.js"></script>
+    <script type="text/javascript">
+        var gitgraph = new GitGraph({
+            template: "metro",
+            orientation: "horizontal",
+            mode: "compact"
+        });
+
+        var gitgraph2 = new GitGraph({
+            template: "metro",
+            orientation: "horizontal",
+            mode: "compact"
+        });
+
+        var master = gitgraph.branch("master");
+        gitgraph.commit(); // 3 commits upon HEAD
+        gitgraph.commit(); // 3 commits upon HEAD
+
+        var master2 = gitgraph2.branch("master");
+        var release = gitgraph2.branch("release");
+        release.commit(); // 3 commits upon HEAD
+        gitgraph2.commit(); // 3 commits upon HEAD
+
+
+        gitgraph.commit();
+
+        var develop = gitgraph.branch("develop"); // New branch from HEAD
+        develop.commit().commit();
+        var hotfix = develop.branch("hotfix"); // New branch from develop
+        hotfix.commit();
+        hotfix.checkout();
+        hotfix.commit();
+
+        hotfix.merge(develop, {
+            message: "New release",
+            tag: "bug_fix_1"
+        })
+
+        develop.merge(master, {
+            message: "New release",
+            tag: "dev_1"
+        });
+
+        gitgraph.commit();
+
+        master.commit({
+            dotSize: 10,
+            dotStrokeWidth: 10,
+            sha1: "666",
+            message: "",
+            author: "Praveen T.N",
+            tag: "live",
+            onClick: function(commit) {
+                console.log("Commits", commit);
+            }
+        });
+    </script>
+
+</head>
+
+</html>
